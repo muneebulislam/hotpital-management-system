@@ -27,8 +27,8 @@ public class Person {
         this.name = name;
     }
 
-    @java.lang.Override
-    public java.lang.String toString() {
+    @Override
+    public String toString() {
         return "Person{" +
                 "name='" + name + '\'' +
                 ", healthNumber=" + healthNumber +
@@ -38,6 +38,6 @@ public class Person {
     public static void main(String[] args){
         Person newPerson = new Person("john", 123);
         newPerson.setName("kohl");
-                System.out.println(newPerson);
+        System.out.println(newPerson);
     }
 }
