@@ -17,19 +17,41 @@ public class Patient extends Person{
         docs = new LinkedList<>();
         bedLabel = -1;
     }
+    /**
+     * Adds a patient in the doctors record.
+     * @param name String: name of the doctor
+     */
+    public void addDoctor(String name){
+        Doctor d = new Doctor(name);
+        this.docs.add(d);
+    }
+
+    /**
+     * Removes a doctor from the patient's record
+     * @param name: name of the attending doctor
+     */
+    public void removeDoctor(String name){
+        for (int i = 0; i<docs.size(); i ++){
+            if (docs.get(i).getName() == name){
+                docs.remove(i);
+            }
+        }
+    }
     @Override
     public String toString(){
         String res = "Patient{ Bed label: "+ this.bedLabel +"\nDoctors attending this patient: ";
+        int count = 0;
         if (this.docs.size() == 0){
             res+="\nNo doctor";
         }
         else {
             for (Doctor doc : docs) {
-                res += "\n" + doc.getName();
+                res += "\n" +count+"- "+ doc.getName();
+                count ++;
             }
         }
 
-        res += " }";
+        res += "\n}";
         return res;
     }
 
@@ -40,6 +62,13 @@ public class Patient extends Person{
     public static void main(String[] args){
         Patient p = new Patient("john", 123);
         System.out.println(p);
+        p.addDoctor("Ryan");
+        p.addDoctor("John");
+        p.addDoctor("mike");
+        System.out.println(p);
+        p.removeDoctor("John");
+        System.out.println(p);
+
     }
 
 }
