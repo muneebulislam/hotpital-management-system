@@ -69,6 +69,7 @@ public class Patient extends Person{
         p.removeDoctor("John");
         System.out.println(p);
 
+
     }
 
 }
