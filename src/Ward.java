@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -6,7 +7,7 @@ import java.util.Arrays;
 public class Ward {
     private String wardName; /** Name of the ward */
     private int firstBedLabel; /**Bed label of the first bed in the ward */
-    private Person[] beds; /** an array of Person */
+    private Patient[] beds; /** an array of Patients */
 
     public Ward(String wardName) {
         this.wardName = wardName;
@@ -22,7 +23,7 @@ public class Ward {
         this.wardName = wardName;
         this.firstBedLabel = firstBedLabel;
         int wardSize = lastBedLabel - firstBedLabel + 1;
-        this.beds = new Person[wardSize];
+        this.beds = new Patient[wardSize];
 
     }
 
@@ -34,7 +35,7 @@ public class Ward {
         return firstBedLabel;
     }
 
-    public Person[] getBeds() {
+    public Patient[] getBeds() {
         return beds;
     }
 
@@ -93,21 +94,21 @@ public class Ward {
         if (idx == -1) return false;
         return this.beds[idx]!= null;
     }
-    public Person getPerson(int bedLabel){
-        Person person;
+    public Person getPatient(int bedLabel){
+        Patient patient;
         try{
            if (isOccupied(bedLabel)){
-               person = this.beds[this.bedLabelToArrayIndex(bedLabel)];
-               return person;
+               patient = this.beds[this.bedLabelToArrayIndex(bedLabel)];
+               return patient;
            }
-           else person = null;
+           else patient = null;
         } catch (Exception e){
             System.out.println(e.getMessage());
             return null;
         }
-        return person;
+        return patient;
     }
-    public void assignPersonToBed(Person p, int bedLabel){
+    public void assignPatientToBed(Patient p, int bedLabel){
         int idx=-1;
         try {
             idx = bedLabelToArrayIndex(bedLabel);
@@ -119,12 +120,42 @@ public class Ward {
         }
     }
 
+    /**
+     * Returns a list of empty beds in the wards
+     * @return ArrayList: Empty beds in the ward
+     */
+    public ArrayList<Integer> getEmptyBeds(){
+        ArrayList<Integer> emptyBeds= new ArrayList<>();
+        for(int i = firstBedLabel; i<firstBedLabel+beds.length; i++){
+            if(!isOccupied(i)){
+                emptyBeds.add(i);
+            }
+        }
+        return emptyBeds;
+    }
+
+    /**
+     * Removes a patient from the bed
+     * @param bedLabel int: bed label you want to remove the patient from
+     */
+    public void removePatient(int bedLabel){
+        int idx=-1;
+        try {
+            idx = bedLabelToArrayIndex(bedLabel);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        if(idx !=- 1){
+            beds[idx]=null;
+        }
+    }
+
     @Override
     public String toString() {
         String res= "Ward{" + "wardName='" + wardName ;
         for(int i=this.firstBedLabel; i<this.firstBedLabel+this.beds.length; i++){
             if (isOccupied(i)){
-                res += "\n, { bed label: "+ i+ "  , Occupant Name: "+ getPerson(i).getName()+ " } ";
+                res += "\n, { bed label: "+ i+ "  , Occupant Name: "+ getPatient(i).getName()+ " } ";
 
             }
             else {
@@ -152,11 +183,16 @@ public class Ward {
         System.out.println("The  bed label for array index 10 : "+w.indexToBedLabel(10));
         System.out.println("Ward name is: "+w.getWardName());
         System.out.println("bed label 10 is occupied? : "+w.isOccupied(13));
-        Person p = new Person("john", 32);
+        Patient p = new Patient("john", 32);
+        Patient p1 = new Patient("Mike", 31);
         System.out.println("person p : "+p);
-        w.assignPersonToBed(p,22);
+        w.assignPatientToBed(p,22);
+        w.assignPatientToBed(p1,27);
         System.out.println("Ward after assigning bed 22 : "+w);
-        w.assignPersonToBed(p,32);
+        w.assignPatientToBed(p,32);
+        System.out.println("Empty beds : "+w.getEmptyBeds());
+        w.removePatient(27);
+        System.out.println("Ward after assigning bed removing Patient from bed 27 : "+w);
 
     }
 }
