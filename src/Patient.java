@@ -39,7 +39,8 @@ public class Patient extends Person{
     }
     @Override
     public String toString(){
-        String res = "Patient{ Bed label: "+ this.bedLabel +"\nDoctors attending this patient: ";
+        String res = "Patient{ Bed label: "+ this.bedLabel + "\nPatient's Name: "+this.getName()
+                +"\nDoctors attending this patient: ";
         int count = 0;
         if (this.docs.size() == 0){
             res+="\nNo doctor";
@@ -68,7 +69,6 @@ public class Patient extends Person{
         System.out.println(p);
         p.removeDoctor("John");
         System.out.println(p);
-
 
     }
 

@@ -94,7 +94,13 @@ public class Ward {
         if (idx == -1) return false;
         return this.beds[idx]!= null;
     }
-    public Person getPatient(int bedLabel){
+
+    /**
+     *
+     * @param bedLabel
+     * @return
+     */
+    public Patient getPatient(int bedLabel){
         Patient patient;
         try{
            if (isOccupied(bedLabel)){
