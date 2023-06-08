@@ -55,22 +55,13 @@ public class HospitalSystem {
         Doctor d = new Doctor(name);
         doctors.put(name,d);
     }
-
-    /**
-     * Assigns a doctor to a patient.
-     * @precond: user has to enter all the information about the doctor as well as the
-     * patient. If the patient and the doctor are already in the hospital system, only
-     * then the doctor can be assigned to the patient.
-     */
-    public void assignDoctor(){
-        Patient p = null;
-        Doctor d= null;
+    public int getValidPatientHealthNumber(){
+        int patientHealthNumber = -1;
         boolean patientNotFound = true;
-        boolean doctorNotFound = true;
         do {
             System.out.println("Please enter the health number of the patient you want to assign a doctor: ");
             try {
-                int patientHealthNumber = Integer.parseInt(scanner.nextLine());
+                 patientHealthNumber = Integer.parseInt(scanner.nextLine());
                 if(patients.containsKey(patientHealthNumber)){
                     patientNotFound = false;
                 }
@@ -83,7 +74,21 @@ public class HospitalSystem {
                 System.out.println(e.getMessage());
             }
         } while (patientNotFound);
+        return patientHealthNumber;
+    }
 
+    /**
+     * Assigns a doctor to a patient.
+     * @precond: user has to enter all the information about the doctor as well as the
+     * patient. If the patient and the doctor are already in the hospital system, only
+     * then the doctor can be assigned to the patient.
+     */
+    public void assignDoctor(){
+        Patient p = null;
+        Doctor d= null;
+        boolean patientNotFound = true;
+        boolean doctorNotFound = true;
+        int healthNumber = getValidPatientHealthNumber();
         do {
                 System.out.println("Please enter the name of the doctor you want to assign to this patient: ");
                 try {
@@ -103,10 +108,11 @@ public class HospitalSystem {
                 } catch (RuntimeException e){
                     System.out.println(e.getMessage());
                 }
-
-
             } while (doctorNotFound);
 
+        if (healthNumber!=-1){
+            p = patients.get(healthNumber);
+        }
         if(p!=null && d!= null){
             // Add the doctor in patients record.
             p.addDoctor(d.getName());
