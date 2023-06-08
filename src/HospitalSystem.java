@@ -44,6 +44,57 @@ public class HospitalSystem {
         Doctor d = new Doctor(name);
         doctors.put(name,d);
     }
+    public void assignDoctor(){
+        String docName="";
+        String patientName="";
+        int patientHealthNumber = -1;
+        Patient p = null;
+        Doctor d= null;
+        boolean patientNotFound = true;
+        boolean doctorNotFound = true;
+        do {
+            System.out.println("Please enter the health number of the patient you want to assign a doctor: ");
+            try {
+                patientHealthNumber = Integer.parseInt(scanner.nextLine());
+            } catch (Exception e) {
+                System.out.println("Please enter a valid health number: ");
+                patientHealthNumber = Integer.parseInt(scanner.nextLine());
+            }
+            if (patients.containsKey(patientHealthNumber)) {
+                patientNotFound = false;
+                p = patients.get(patientHealthNumber);
+            } else {
+                System.out.println("The health number of the patient you entered does not exist in the system : ");
+            }
+        } while (patientNotFound);
+
+        do {
+                System.out.println("Please enter the name of the doctor you want to assign to this patient: ");
+                try {
+                    docName = scanner.nextLine();
+                    if (docName == ""){
+                        throw new InputMismatchException("Your entered an empty string! Please try again.");
+                    }
+                } catch (Exception e){
+                    System.out.println("Please enter a valid string name: ");
+                }
+                if (doctors.containsKey(docName)){
+                    d = doctors.get(docName);
+                    doctorNotFound = false;
+                }
+                else {
+                    System.out.println("The name of the doctor you entered does not exist in the system : ");
+                }
+
+            } while (doctorNotFound);
+
+        if(p!=null && d!= null){
+            // Add the doctor in patients record.
+            p.addDoctor(d.getName());
+            d.addPatient(p.getName(),p.getHealthNumber());
+        }
+
+    }
    public void run(){
        String message = "Please Select an option (1-8)" +
                "1. quit\n" +
@@ -70,6 +121,8 @@ public class HospitalSystem {
                case 2: addPatient();
                         break;
                case 3: addDoctor();
+                   break;
+               case 4: assignDoctor();
                    break;
                default:
                    System.out.println("Please enter a valid number 1-8");

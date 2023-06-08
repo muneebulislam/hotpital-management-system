@@ -41,7 +41,7 @@ public class Patient extends Person{
     public String toString(){
         String res = "Patient{ Bed label: "+ this.bedLabel + "\nPatient's Name: "+this.getName()
                 +"\nDoctors attending this patient: ";
-        int count = 0;
+        int count = 1;
         if (this.docs.size() == 0){
             res+="\nNo doctor";
         }
