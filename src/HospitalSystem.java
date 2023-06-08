@@ -1,8 +1,5 @@
 import javax.print.Doc;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Models the Hospital System
@@ -66,9 +63,6 @@ public class HospitalSystem {
      * then the doctor can be assigned to the patient.
      */
     public void assignDoctor(){
-        String docName="";
-        String patientName="";
-        int patientHealthNumber = -1;
         Patient p = null;
         Doctor d= null;
         boolean patientNotFound = true;
@@ -76,36 +70,40 @@ public class HospitalSystem {
         do {
             System.out.println("Please enter the health number of the patient you want to assign a doctor: ");
             try {
-                patientHealthNumber = Integer.parseInt(scanner.nextLine());
-            } catch (Exception e) {
+                int patientHealthNumber = Integer.parseInt(scanner.nextLine());
+                if(patients.containsKey(patientHealthNumber)){
+                    patientNotFound = false;
+                }
+                else {
+                    throw new NoSuchElementException("No patient with given health number found!");
+                }
+            } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid health number: ");
-                patientHealthNumber = Integer.parseInt(scanner.nextLine());
-            }
-            if (patients.containsKey(patientHealthNumber)) {
-                patientNotFound = false;
-                p = patients.get(patientHealthNumber);
-            } else {
-                System.out.println("The health number of the patient you entered does not exist in the system : ");
+            } catch (NoSuchElementException e){
+                System.out.println(e.getMessage());
             }
         } while (patientNotFound);
 
         do {
                 System.out.println("Please enter the name of the doctor you want to assign to this patient: ");
                 try {
-                    docName = scanner.nextLine();
+                    String docName = scanner.nextLine();
                     if (docName == ""){
-                        throw new InputMismatchException("Your entered an empty string! Please try again.");
+                        throw new RuntimeException("Your entered an empty string! Please try again.");
                     }
-                } catch (Exception e){
-                    System.out.println("Please enter a valid string name: ");
+                    else if (doctors.containsKey(docName)){
+                        d = doctors.get(docName);
+                        doctorNotFound = false;
+                    }
+                    else {
+                        throw new NoSuchElementException("No doctor with the given name found in the system, Please try again!");
+                    }
+                } catch (NoSuchElementException e){
+                    System.out.println(e.getMessage());
+                } catch (RuntimeException e){
+                    System.out.println(e.getMessage());
                 }
-                if (doctors.containsKey(docName)){
-                    d = doctors.get(docName);
-                    doctorNotFound = false;
-                }
-                else {
-                    System.out.println("The name of the doctor you entered does not exist in the system : ");
-                }
+
 
             } while (doctorNotFound);
 
@@ -124,6 +122,14 @@ public class HospitalSystem {
     public void displayEmptyBeds(){
         ArrayList<Integer>emptyBeds =  ward.getEmptyBeds();
         System.out.println("List of Empty beds: "+emptyBeds);
+    }
+
+    /**
+     * Assigns a bed to a patient
+     * @precond: User has to enter the health number of the patient.
+     */
+    public void assignBed(){
+
     }
 
     /**
