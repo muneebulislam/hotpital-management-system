@@ -59,7 +59,7 @@ public class HospitalSystem {
         int patientHealthNumber = -1;
         boolean patientNotFound = true;
         do {
-            System.out.println("Please enter the health number of the patient you want to assign a doctor: ");
+            System.out.println("Please enter the health number of the patient: ");
             try {
                  patientHealthNumber = Integer.parseInt(scanner.nextLine());
                 if(patients.containsKey(patientHealthNumber)){
@@ -103,7 +103,7 @@ public class HospitalSystem {
                     else {
                         throw new NoSuchElementException("No doctor with the given name found in the system, Please try again!");
                     }
-                } catch (NoSuchElementException e){
+                } catch (NoSuchElementException e) {
                     System.out.println(e.getMessage());
                 } catch (RuntimeException e){
                     System.out.println(e.getMessage());
@@ -135,7 +135,49 @@ public class HospitalSystem {
      * @precond: User has to enter the health number of the patient.
      */
     public void assignBed(){
+        int healthNum = getValidPatientHealthNumber();
+        boolean notFound = true;
+        Patient p = patients.get(healthNum);
+        int bedLabel = -1;
+        do {
+            try {
+                System.out.println("Please Enter the bed label you want to assign to this patient: ");
+                bedLabel = Integer.parseInt(scanner.nextLine());
+                ward.assignPatientToBed(p,bedLabel);
+                if(bedLabel !=- 1){
+                    patients.get(healthNum).setBedLabel(bedLabel);
+                }
+                notFound = false;
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid health number: ");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        } while(notFound);
 
+    }
+
+    /**
+     * Release a patient from a bed in the ward
+     */
+    public void releasePatient(){
+        int healthNum = getValidPatientHealthNumber();
+        boolean notFound = true;
+        Patient p = patients.get(healthNum);
+        int bedLabel = -1;
+        do {
+            try {
+                System.out.println("Please Enter the bed label you want to discharge this patient from: ");
+                bedLabel = Integer.parseInt(scanner.nextLine());
+                ward.removePatient(bedLabel);
+                p.removeBedLabel();
+                notFound = false;
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid health number: ");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        } while(notFound);
     }
 
     /**
@@ -174,6 +216,12 @@ public class HospitalSystem {
                    break;
                case 5: displayEmptyBeds();
                    break;
+               case 6: assignBed();
+                   break;
+               case 7: releasePatient();
+                   break;
+               case 8: dropPatientDoctorAssociation();
+                   break;
                default:
                    System.out.println("Please enter a valid number 1-8");
 
@@ -190,7 +238,7 @@ public class HospitalSystem {
        hospital.run();
        System.out.println(hospital.patients);
        System.out.println(hospital.doctors);
-//       System.out.println(hospital.scanner);
+       System.out.println(hospital.ward);
 
    }
 }

@@ -17,6 +17,21 @@ public class Patient extends Person{
         docs = new LinkedList<>();
         bedLabel = -1;
     }
+
+    /**
+     * Sets a bed label for the patient
+     * @param bedLabel int: the bed label you want to assign.
+     */
+    public void setBedLabel(int bedLabel){
+        this.bedLabel = bedLabel;
+    }
+
+    /**
+     * removes the bed label of the patient.
+     */
+    public void removeBedLabel(){
+        this.bedLabel = -1;
+    }
     /**
      * Adds a patient in the doctors record.
      * @param name String: name of the doctor

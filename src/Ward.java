@@ -115,14 +115,12 @@ public class Ward {
         return patient;
     }
     public void assignPatientToBed(Patient p, int bedLabel){
-        int idx=-1;
+        int idx = bedLabelToArrayIndex(bedLabel);
         try {
-            idx = bedLabelToArrayIndex(bedLabel);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        if(idx !=- 1){
             this.beds[idx] = p;
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("The given bed label: "+bedLabel+" ,does not exist in the ward! Try again!");
         }
     }
 
