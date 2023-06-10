@@ -28,21 +28,46 @@ public class HospitalSystem {
      * @precond user has to enter the name of the patient as well as his health number
      */
    public void addPatient(){
-        int healthNum;
-       System.out.println("Enter patient's name: ");
-       String name = scanner.nextLine();
-       System.out.println("Enter patient's health number: ");
-       try{
-            healthNum = Integer.parseInt(scanner.nextLine());
-       }
-       catch (Exception e){
-           System.out.println(e.getMessage());
-           System.out.println("Please enter a valid health number: ");
-            healthNum = Integer.parseInt(scanner.nextLine());
-       }
+       System.out.println("Getting information about the patient.....");
+       boolean patientNotFound = true;
+       String patientName = "";
+       boolean patientHealthNumpNotFound = true;
+       int patientHealthNumber = -1;
+       //Get patient's name
+       do {
+           System.out.println("Please enter the name of the patient  : ");
+           try {
+               patientName = scanner.nextLine();
+               if (patientName.equals("")){
+                   throw new RuntimeException("Your entered an empty string! Please try again.");
+               }
+               else {
+                   patientNotFound = false;
+               }
+           }
+             catch (RuntimeException e){
+               System.out.println(e.getMessage());
+           }
+       } while (patientNotFound);
 
-       Patient p = new Patient(name, healthNum);
-       patients.put(healthNum,p);
+   //Get patient's health number
+
+       do {
+           System.out.println("Please enter the health number of the patient: ");
+           try {
+               patientHealthNumber = Integer.parseInt(scanner.nextLine());
+               if(patientHealthNumber!=-1){
+                   patientHealthNumpNotFound = false;
+               }
+           } catch (NumberFormatException e) {
+               System.out.println("Please enter a valid health number: ");
+           }
+       } while (patientHealthNumpNotFound);
+
+       if(patientHealthNumber!= -1 && !patientName.equals("")){
+       Patient p = new Patient(patientName, patientHealthNumber);
+       patients.put(patientHealthNumber,p);
+       }
    }
 
     /**
@@ -50,10 +75,30 @@ public class HospitalSystem {
      * @precond: User has to enter the
      */
     public void addDoctor(){
-        System.out.println("Enter Doctor's name: ");
-        String name = scanner.nextLine();
-        Doctor d = new Doctor(name);
-        doctors.put(name,d);
+        System.out.println("Getting information about the doctor to add in the system.... ");
+
+        boolean doctorNotFound = true;
+        String doctorName = "";
+        do {
+            System.out.println("Please enter the name of the doctor  : ");
+            try {
+                doctorName = scanner.nextLine();
+                if (doctorName.equals("")){
+                    throw new RuntimeException("Your entered an empty string! Please try again.");
+                }
+                else {
+                    doctorNotFound = false;
+                }
+            }
+            catch (RuntimeException e){
+                System.out.println(e.getMessage());
+            }
+        } while (doctorNotFound);
+
+
+        Doctor d = new Doctor(doctorName);
+        doctors.put(doctorName,d);
+
     }
     public int getValidPatientHealthNumber(){
         int patientHealthNumber = -1;
@@ -79,12 +124,12 @@ public class HospitalSystem {
 
     public String getValidDoctorName(){
         boolean doctorNotFound = true;
-        String docName = null;
+        String docName = "";
         do {
-            System.out.println("Please enter the name of the doctor you want to assign to this patient: ");
+            System.out.println("Please enter the name of the doctor  : ");
             try {
                  docName = scanner.nextLine();
-                if (docName == ""){
+                if (docName.equals("")){
                     throw new RuntimeException("Your entered an empty string! Please try again.");
                 }
                 else if (doctors.containsKey(docName)){
@@ -99,17 +144,21 @@ public class HospitalSystem {
                 System.out.println(e.getMessage());
             }
         } while (doctorNotFound);
+
         return docName;
     }
 
     public int getValidBedLabel(){
+        System.out.println("Getting information about the bed label .... ");
         boolean notFound = true;
         int bedLabel = -1;
         do {
             try {
                 System.out.println("Please enter a valid bed label for the patient: ");
                 bedLabel = Integer.parseInt(scanner.nextLine());
-                notFound = false;
+                if(ward.bedLabelToArrayIndex(bedLabel)!=-1){
+                    notFound = false;
+                }
             } catch (NumberFormatException e) {
                 System.out.println("Please enter only an int bed label : ");
             } catch (Exception e) {
@@ -128,12 +177,9 @@ public class HospitalSystem {
      * then the doctor can be assigned to the patient.
      */
     public void assignDoctor(){
-        boolean patientNotFound = true;
-        boolean doctorNotFound = true;
-
         int healthNumber = getValidPatientHealthNumber();
         String docName = getValidDoctorName();
-        if(healthNumber!=-1 && docName!= ""){
+        if(healthNumber!=-1 ){
             // Add the doctor in patients record.
             patients.get(healthNumber).addDoctor(doctors.get(docName).getName());
             doctors.get(docName).addPatient(patients.get(healthNumber).getName(), patients.get(healthNumber).getHealthNumber());
@@ -172,12 +218,24 @@ public class HospitalSystem {
         int healthNum = getValidPatientHealthNumber();
         int bedLabel = getValidBedLabel();
         Patient p = patients.get(healthNum);
-        ward.removePatient(bedLabel);
-        p.removeBedLabel();
+        if (bedLabel== p.getBedLabel()){
+            ward.removePatient(bedLabel);
+            p.removeBedLabel();
+        }
 
     }
+
+    /**
+     * Removes the patient from doctors list of patients and removes the doctor from patients
+     * list of attending doctors.
+     */
     public void dropPatientDoctorAssociation(){
         int healthNumber = getValidPatientHealthNumber();
+        String docName = getValidDoctorName();
+        if (healthNumber!= -1 && !docName.equals("")){
+            doctors.get(docName).removePatient(patients.get(healthNumber).getHealthNumber());
+            patients.get(healthNumber).removeDoctor(doctors.get(docName).getName());
+        }
 
     }
 

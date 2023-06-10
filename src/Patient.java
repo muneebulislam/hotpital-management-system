@@ -19,6 +19,14 @@ public class Patient extends Person{
     }
 
     /**
+     * Returns the bed label of the patient.
+     * @return int: bed label
+     */
+    public int getBedLabel(){
+        return this.bedLabel;
+    }
+
+    /**
      * Sets a bed label for the patient
      * @param bedLabel int: the bed label you want to assign.
      */
