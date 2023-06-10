@@ -77,6 +77,50 @@ public class HospitalSystem {
         return patientHealthNumber;
     }
 
+    public String getValidDoctorName(){
+        boolean doctorNotFound = true;
+        String docName = null;
+        do {
+            System.out.println("Please enter the name of the doctor you want to assign to this patient: ");
+            try {
+                 docName = scanner.nextLine();
+                if (docName == ""){
+                    throw new RuntimeException("Your entered an empty string! Please try again.");
+                }
+                else if (doctors.containsKey(docName)){
+                    doctorNotFound = false;
+                }
+                else {
+                    throw new NoSuchElementException("No doctor with the given name found in the system, Please try again!");
+                }
+            } catch (NoSuchElementException e) {
+                System.out.println(e.getMessage());
+            } catch (RuntimeException e){
+                System.out.println(e.getMessage());
+            }
+        } while (doctorNotFound);
+        return docName;
+    }
+
+    public int getValidBedLabel(){
+        boolean notFound = true;
+        int bedLabel = -1;
+        do {
+            try {
+                System.out.println("Please enter a valid bed label for the patient: ");
+                bedLabel = Integer.parseInt(scanner.nextLine());
+                notFound = false;
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter only an int bed label : ");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        } while(notFound);
+
+            return bedLabel;
+
+    }
+
     /**
      * Assigns a doctor to a patient.
      * @precond: user has to enter all the information about the doctor as well as the
@@ -84,39 +128,15 @@ public class HospitalSystem {
      * then the doctor can be assigned to the patient.
      */
     public void assignDoctor(){
-        Patient p = null;
-        Doctor d= null;
         boolean patientNotFound = true;
         boolean doctorNotFound = true;
-        int healthNumber = getValidPatientHealthNumber();
-        do {
-                System.out.println("Please enter the name of the doctor you want to assign to this patient: ");
-                try {
-                    String docName = scanner.nextLine();
-                    if (docName == ""){
-                        throw new RuntimeException("Your entered an empty string! Please try again.");
-                    }
-                    else if (doctors.containsKey(docName)){
-                        d = doctors.get(docName);
-                        doctorNotFound = false;
-                    }
-                    else {
-                        throw new NoSuchElementException("No doctor with the given name found in the system, Please try again!");
-                    }
-                } catch (NoSuchElementException e) {
-                    System.out.println(e.getMessage());
-                } catch (RuntimeException e){
-                    System.out.println(e.getMessage());
-                }
-            } while (doctorNotFound);
 
-        if (healthNumber!=-1){
-            p = patients.get(healthNumber);
-        }
-        if(p!=null && d!= null){
+        int healthNumber = getValidPatientHealthNumber();
+        String docName = getValidDoctorName();
+        if(healthNumber!=-1 && docName!= ""){
             // Add the doctor in patients record.
-            p.addDoctor(d.getName());
-            d.addPatient(p.getName(),p.getHealthNumber());
+            patients.get(healthNumber).addDoctor(doctors.get(docName).getName());
+            doctors.get(docName).addPatient(patients.get(healthNumber).getName(), patients.get(healthNumber).getHealthNumber());
         }
 
     }
@@ -136,24 +156,12 @@ public class HospitalSystem {
      */
     public void assignBed(){
         int healthNum = getValidPatientHealthNumber();
-        boolean notFound = true;
         Patient p = patients.get(healthNum);
-        int bedLabel = -1;
-        do {
-            try {
-                System.out.println("Please Enter the bed label you want to assign to this patient: ");
-                bedLabel = Integer.parseInt(scanner.nextLine());
-                ward.assignPatientToBed(p,bedLabel);
-                if(bedLabel !=- 1){
-                    patients.get(healthNum).setBedLabel(bedLabel);
-                }
-                notFound = false;
-            } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid health number: ");
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        } while(notFound);
+        int bedLabel = getValidBedLabel();
+        if(healthNum != -1 && bedLabel != -1){
+            p.setBedLabel(bedLabel);
+            ward.assignPatientToBed(p,bedLabel);
+        }
 
     }
 
@@ -162,22 +170,15 @@ public class HospitalSystem {
      */
     public void releasePatient(){
         int healthNum = getValidPatientHealthNumber();
-        boolean notFound = true;
+        int bedLabel = getValidBedLabel();
         Patient p = patients.get(healthNum);
-        int bedLabel = -1;
-        do {
-            try {
-                System.out.println("Please Enter the bed label you want to discharge this patient from: ");
-                bedLabel = Integer.parseInt(scanner.nextLine());
-                ward.removePatient(bedLabel);
-                p.removeBedLabel();
-                notFound = false;
-            } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid health number: ");
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        } while(notFound);
+        ward.removePatient(bedLabel);
+        p.removeBedLabel();
+
+    }
+    public void dropPatientDoctorAssociation(){
+        int healthNumber = getValidPatientHealthNumber();
+
     }
 
     /**
