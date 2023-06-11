@@ -138,9 +138,13 @@ public class HospitalSystem {
                 else {
                     throw new NoSuchElementException("No doctor with the given name found in the system, Please try again!");
                 }
-            } catch (NoSuchElementException e) {
+            } catch (NoSuchElementException e){
                 System.out.println(e.getMessage());
-            } catch (RuntimeException e){
+            }
+            catch (RuntimeException e){
+                System.out.println(e.getMessage());
+            }
+            catch (Exception e){
                 System.out.println(e.getMessage());
             }
         } while (doctorNotFound);
@@ -181,7 +185,9 @@ public class HospitalSystem {
         String docName = getValidDoctorName();
         if(healthNumber!=-1 ){
             // Add the doctor in patients record.
-            patients.get(healthNumber).addDoctor(doctors.get(docName).getName());
+            if(!patients.get(healthNumber).hasDoctor(docName)){
+                patients.get(healthNumber).addDoctor(doctors.get(docName).getName());
+            }
             doctors.get(docName).addPatient(patients.get(healthNumber).getName(), patients.get(healthNumber).getHealthNumber());
         }
 
@@ -201,6 +207,7 @@ public class HospitalSystem {
      * @precond: User has to enter the health number of the patient.
      */
     public void assignBed(){
+        System.out.println("Getting information about the patient you want to assign a bed....");
         int healthNum = getValidPatientHealthNumber();
         Patient p = patients.get(healthNum);
         int bedLabel = getValidBedLabel();
@@ -239,6 +246,23 @@ public class HospitalSystem {
 
     }
 
+    public void displayCurrentState(){
+        String res = "HospitalSystem{ Ward information.....:\n"+ ward+"\nDoctors in the wards are.....\n";
+        int docCount = 1;
+        int patientCount = 1;
+        for(String name : doctors.keySet()){
+            res +="\n" +docCount+ "- "+ name;
+            docCount++;
+        }
+
+        res += "\nPatients in the ward are....\n";
+        for(int healthNum : patients.keySet()){
+            res+="\n"+patientCount+ "- "+ patients.get(healthNum);
+            docCount++;
+        }
+        System.out.println(res);
+    }
+
     /**
      * A method to run the hospital system.
      */
@@ -251,7 +275,8 @@ public class HospitalSystem {
                "5. display the empty beds of the ward\n" +
                "6. assign a patient a bed\n" +
                "7. release a patient\n" +
-               "8. drop doctor-patient association\n";
+               "8. drop doctor-patient association\n"+
+               "9. display current system state";
        int option = -1;
        boolean dontEnd = true;
        while (dontEnd){
@@ -281,6 +306,9 @@ public class HospitalSystem {
                    break;
                case 8: dropPatientDoctorAssociation();
                    break;
+               case 9: displayCurrentState();
+                   break;
+
                default:
                    System.out.println("Please enter a valid number 1-8");
 

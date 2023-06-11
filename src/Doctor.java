@@ -17,7 +17,11 @@ public class Doctor extends BasicDoctor{
      */
     public void addPatient(String name, int healthNumber){
         Patient p = new Patient(name, healthNumber);
-        this.patients.add(p);
+        for(int i=0;i<patients.size();i++){
+            if(patients.get(i) != p){
+                patients.add(p);
+            }
+        }
     }
 
     /**

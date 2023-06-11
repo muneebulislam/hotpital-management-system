@@ -25,6 +25,14 @@ public class Patient extends Person{
     public int getBedLabel(){
         return this.bedLabel;
     }
+    public boolean hasDoctor(String docName){
+        for(int i = 0; i< docs.size(); i++){
+            if(docs.get(i).getName().equals(docName)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Sets a bed label for the patient
@@ -46,7 +54,9 @@ public class Patient extends Person{
      */
     public void addDoctor(String name){
         Doctor d = new Doctor(name);
-        this.docs.add(d);
+        if(!docs.contains(d)){
+            this.docs.add(d);
+        }
     }
 
     /**
